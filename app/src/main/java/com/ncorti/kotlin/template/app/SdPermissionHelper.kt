@@ -25,7 +25,31 @@ class SdPermissionHelper(
     private var requestForStoragePermission: ActivityResultLauncher<String>? = null
 
     init {
-        if (Build.VERSION.SDK_INT >= 30) {
+        registerForFullStoragePermission(caller)
+        registerForStoragePermission(caller)
+    }
+
+    fun requestStoragePermission() {
+        ensureSdCardPrivilege()
+    }
+
+    fun dispose() {
+        requestForFullStorage?.unregister()
+        requestForStoragePermission?.unregister()
+    }
+
+    private fun registerForStoragePermission(caller: ActivityResultCaller) {
+        if (hasStoragePermission) return
+        val requestPermission = ActivityResultContracts.RequestPermission()
+        requestForStoragePermission =
+            caller.registerForActivityResult(requestPermission) { permissionGranted ->
+                Log.i(TAG, "requestPermissionResult:$permissionGranted")
+                resultCallback.invoke(StorageResult.PermissionResult(permissionGranted))
+            }
+    }
+
+    private fun registerForFullStoragePermission(caller: ActivityResultCaller) {
+        if (Build.VERSION.SDK_INT >= 30 && !hasFullStoragePermission) {
             val requestForStorage = ActivityResultContracts.StartActivityForResult()
             val activityResultLauncher = caller.registerForActivityResult(requestForStorage) {
                 val permissionGranted = hasFullStoragePermission
@@ -37,21 +61,6 @@ class SdPermissionHelper(
             }
             requestForFullStorage = activityResultLauncher
         }
-        val requestPermission = ActivityResultContracts.RequestPermission()
-        requestForStoragePermission =
-            caller.registerForActivityResult(requestPermission) { permissionGranted ->
-                Log.i(TAG, "requestPermissionResult:$permissionGranted")
-                resultCallback.invoke(StorageResult.PermissionResult(permissionGranted))
-            }
-    }
-
-    fun requestStoragePermission() {
-        ensureSdCardPrivilege()
-    }
-
-    fun dispose() {
-        requestForFullStorage?.unregister()
-        requestForStoragePermission?.unregister()
     }
 
     private fun ensureSdCardPrivilege() {
