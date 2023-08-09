@@ -15,14 +15,40 @@ class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
 
+    private var sdPermissionHelper: SdPermissionHelper? = null
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        initData()
+        ensureSdCardPrivilege()
     }
 
-    private fun initData() {
+    override fun onDestroy() {
+        super.onDestroy()
+        sdPermissionHelper?.dispose()
+    }
+
+    private fun ensureSdCardPrivilege() {
+        if (!SdPermissionHelper.hasStoragePermission) {
+            sdPermissionHelper = SdPermissionHelper(this) {
+                when (it) {
+                    is StorageResult.PermissionResult -> {
+                        if (it.isSuccess) {
+                            initPluginResources()
+                        }
+                    }
+
+                    else -> Unit
+                }
+            }
+            sdPermissionHelper?.requestStoragePermission()
+        } else {
+            initPluginResources()
+        }
+    }
+
+    private fun initPluginResources() {
         val file = File(Environment.getExternalStorageDirectory(), "test.apk")
         mockPlugin(file)
         val drawable = ResourcesCompat.getDrawable(
