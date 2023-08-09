@@ -1,3 +1,5 @@
+@file:Suppress("unused")
+
 package com.ncorti.kotlin.template.app
 
 import android.os.Bundle
@@ -26,12 +28,12 @@ class MainActivity : AppCompatActivity() {
         val drawable = ResourcesCompat.getDrawable(
             resources,
             getPluginDrawableResId(
-                this,
-                file.absolutePath,
-                "com.example.composedemo",
-                "scenery"
+                context = this,
+                pluginPath = file.absolutePath,
+                apkPackageName = "com.example.composedemo",
+                resName = "scenery",
             ),
-            theme
+            theme,
         )
         binding.image.setImageDrawable(drawable)
     }

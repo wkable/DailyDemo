@@ -1,4 +1,4 @@
-@file:Suppress("HasPlatformType")
+@file:Suppress("HasPlatformType", "KDocUnresolvedReference", "unused")
 
 package com.ncorti.kotlin.template.app.utils
 
@@ -10,9 +10,7 @@ import android.content.pm.ApplicationInfo
 import android.content.res.Configuration
 import android.content.res.Resources
 import android.os.Build
-import android.os.Environment
 import android.util.ArrayMap
-import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import com.ncorti.kotlin.template.app.R
 import dalvik.system.DexClassLoader
@@ -41,7 +39,7 @@ fun Context.getContextImpl(): Context {
     return innerContext
 }
 
-fun Context.getLoadedApk() = Reflector.with(getContextImpl()).field("mPackageInfo").get<Any?>(this)
+fun Context.getLoadedApk() = Reflector.with(getContextImpl()).field("mPackageInfo").get<Any?>()
 
 /**
  * 将 plugin apk 资源加入到 Resources 对象中
@@ -61,14 +59,16 @@ fun addPluginPathToSystem(context: Context, pluginFile: File): Boolean {
         applicationInfo.splitSourceDirs = newSourceDirs
 
         val loadedApk = context.getLoadedApk()
-        Reflector.with(loadedApk).field("mSplitResDirs")
-            .set(appendToArray(splitSourceDirs, pluginFile.absolutePath))
+        val splitResDirs = Reflector.with(loadedApk).field("mSplitResDirs")
+        val resDirs = splitResDirs.get<Array<String>>()
+        val newSplitDirs = appendToArray(resDirs, pluginFile.absolutePath)
+        splitResDirs.set(newSplitDirs)
     }.isSuccess
 }
 
 fun getResourcesMapping(): ArrayMap<Any, WeakReference<Any>> {
     val resourceManager =
-        Reflector.on("android.app.ResourcesManager").method("getInstance").call<Any>(null)
+        Reflector.on("android.app.ResourcesManager").method("getInstance").bind(null).call<Any>()
     return Reflector.with(resourceManager).field("mResourceImpls").get(resourceManager)
 }
 
@@ -88,27 +88,27 @@ fun getPluginDrawableResId(
         null,
         ClassLoader.getSystemClassLoader(),
     )
-    // 通过使用apk自己的类加载器，反射出R类中相应的内部类进而获取我们需要的资源id
-    return Reflector.on("$apkPackageName.R\$drawable", true, dexClassLoader).field(resName)
-        .get(R.id::class.java)
+    val clazz = dexClassLoader.loadClass("$apkPackageName.R\$drawable")
+    clazz.getDeclaredField(resName).apply {
+        isAccessible = true
+        return getInt(R.id::class.java)
+    }
 }
 
 @TargetApi(24)
-fun Resources.getResourcesImpl() = Reflector.with(this).field("getImpl").get<Any>(this)
+fun Resources.getResourcesImpl() = Reflector.with(this).method("getImpl").call<Any>()
 
+/**
+ * 仅替换 [this] 的 resources 以及 Application Context 的 resources
+ */
 fun Context.mockPlugin(pluginFile: File) {
     addPluginPathToSystem(this, pluginFile)
     val originalMapping = getResourcesMapping()
-    originalMapping.forEach {
-        val key = it.key
-        val value = it.value
-        Log.i(TAG, "mockPlugin before: $key ->$value")
-    }
     if (Build.VERSION.SDK_INT >= 28 || (Build.VERSION.SDK_INT >= 27 && Build.VERSION.PREVIEW_SDK_INT != 0)) {
-        val newApplicationResources =
-            applicationContext.createConfigurationContext(Configuration()).resources.getResourcesImpl()
+        val newResources = applicationContext.createConfigurationContext(Configuration()).resources
+        val newApplicationResources = newResources.getResourcesImpl()
         val newActivityResources =
-            this.createConfigurationContext(resources.configuration).resources.getResourcesImpl()
+            this.createConfigurationContext(newResources.configuration).resources.getResourcesImpl()
         val newResourceMapping = mutableMapOf<Any, WeakReference<Any>>()
         newResourceMapping.putAll(originalMapping)
         originalMapping.forEach {
@@ -134,12 +134,7 @@ fun Context.mockPlugin(pluginFile: File) {
         }
         originalMapping.clear()
         originalMapping.putAll(newResourceMapping)
-    }
-    ResourcesManager.getInstance()
-        .appendLibAssetForMainAssetPath(applicationInfo.publicSourceDir, "$packageName.test")
-    originalMapping.forEach {
-        val key = it.key
-        val value = it.value
-        Log.i(TAG, "mockPlugin after: $key ->$value")
+        ResourcesManager.getInstance()
+            .appendLibAssetForMainAssetPath(applicationInfo.publicSourceDir, "$packageName.test")
     }
 }
