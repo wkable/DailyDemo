@@ -9,7 +9,7 @@ android {
     defaultConfig {
         minSdk = libs.versions.min.sdk.version.get().toInt()
         namespace = "com.ncorti.kotlin.template.app"
-
+        targetSdk = libs.versions.target.sdk.version.get().toInt()
         applicationId = AppCoordinates.APP_ID
         versionCode = AppCoordinates.APP_VERSION_CODE
         versionName = AppCoordinates.APP_VERSION_NAME
@@ -30,7 +30,7 @@ android {
             isMinifyEnabled = false
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
-                "proguard-rules.pro"
+                "proguard-rules.pro",
             )
         }
     }

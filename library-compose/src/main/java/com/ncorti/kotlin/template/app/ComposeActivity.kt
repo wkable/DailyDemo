@@ -38,17 +38,17 @@ fun AppMain() {
             topBar = {
                 TopAppBar(
                     title = { Text(text = "Kotlin Android Template") },
-                    backgroundColor = MaterialTheme.colors.primary
+                    backgroundColor = MaterialTheme.colors.primary,
                 )
             },
-            backgroundColor = MaterialTheme.colors.background
+            backgroundColor = MaterialTheme.colors.background,
         ) {
             Box(
                 modifier = Modifier
                     .padding(it)
                     .fillMaxSize()
                     .wrapContentSize(align = Alignment.Center)
-                    .padding(horizontal = 8.dp)
+                    .padding(horizontal = 8.dp),
             ) {
                 Factorial()
             }

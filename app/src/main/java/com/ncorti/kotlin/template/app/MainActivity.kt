@@ -1,12 +1,13 @@
 package com.ncorti.kotlin.template.app
 
-import android.content.Intent
 import android.os.Bundle
-import android.view.View
+import android.os.Environment
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.res.ResourcesCompat
 import com.ncorti.kotlin.template.app.databinding.ActivityMainBinding
-import com.ncorti.kotlin.template.library.FactorialCalculator
-import com.ncorti.kotlin.template.library.android.ToastUtil
+import com.ncorti.kotlin.template.app.utils.getPluginDrawableResId
+import com.ncorti.kotlin.template.app.utils.mockPlugin
+import java.io.File
 
 class MainActivity : AppCompatActivity() {
 
@@ -16,28 +17,27 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
+        initData()
+    }
 
-        binding.buttonCompute.setOnClickListener {
-            val message = if (binding.editTextFactorial.text.isNotEmpty()) {
-                val input = binding.editTextFactorial.text.toString().toLong()
-                val result = try {
-                    FactorialCalculator.computeFactorial(input).toString()
-                } catch (ex: IllegalStateException) {
-                    "Error: ${ex.message}"
-                }
+    private fun initData() {
+        val file = File(Environment.getExternalStorageDirectory(), "test.apk")
+        mockPlugin(file)
+        val drawable = ResourcesCompat.getDrawable(
+            resources,
+            getPluginDrawableResId(
+                this,
+                file.absolutePath,
+                "com.example.composedemo",
+                "scenery"
+            ),
+            theme
+        )
+        binding.image.setImageDrawable(drawable)
+    }
 
-                binding.textResult.text = result
-                binding.textResult.visibility = View.VISIBLE
-                getString(R.string.notification_title, result)
-            } else {
-                getString(R.string.please_enter_a_number)
-            }
-            ToastUtil.showToast(this, message)
-        }
+    companion object {
 
-        binding.buttonAppcompose.setOnClickListener {
-            val intent = Intent(it.context, ComposeActivity::class.java)
-            startActivity(intent)
-        }
+        private const val TAG = "MainActivity"
     }
 }

@@ -1,6 +1,3 @@
-import com.android.build.gradle.LibraryExtension
-import org.gradle.api.tasks.bundling.Jar
-
 /**
  * Precompiled script plugin from:
  * https://github.com/cortinico/kotlin-android-template/blob/master/buildSrc/src/main/kotlin/publish.gradle.kts
@@ -100,6 +97,5 @@ publishing {
         }
     }
 }
-
 
 val String.byProperty: String? get() = findProperty(this) as? String

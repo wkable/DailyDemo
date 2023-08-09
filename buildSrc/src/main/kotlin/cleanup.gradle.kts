@@ -24,11 +24,11 @@ tasks.register("templateCleanup") {
 
         file("settings.gradle.kts").replace(
             "rootProject.name = (\"kotlin-android-template\")",
-            "rootProject.name = (\"$name\")"
+            "rootProject.name = (\"$name\")",
         )
         file("buildSrc/src/main/java/Coordinates.kt").replace(
             "com.ncorti.kotlin.template",
-            "com.github.$owner.$name"
+            "com.github.$owner.$name",
         )
 
         file("buildSrc/src/main/kotlin/publish.gradle.kts").apply {
@@ -39,7 +39,7 @@ tasks.register("templateCleanup") {
             // Keep the link to the original script
             replace(
                 "* https://github.com/$owner/$name/blob/master/buildSrc/src/main/kotlin/publish.gradle.kts",
-                "* https://github.com/cortinico/kotlin-android-template/blob/master/buildSrc/src/main/kotlin/publish.gradle.kts"
+                "* https://github.com/cortinico/kotlin-android-template/blob/master/buildSrc/src/main/kotlin/publish.gradle.kts",
             )
         }
 
@@ -51,7 +51,7 @@ tasks.register("templateCleanup") {
         file(".github/workflows/cleanup.yaml").delete()
         file("build.gradle.kts").replace(
             "    cleanup\n",
-            ""
+            "",
         )
         file("buildSrc/src/main/kotlin/cleanup.gradle.kts").delete()
     }

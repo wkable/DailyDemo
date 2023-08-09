@@ -37,15 +37,15 @@ fun Factorial(modifier: Modifier = Modifier) {
     val scope = rememberCoroutineScope()
     Column(
         modifier = modifier,
-        verticalArrangement = Arrangement.spacedBy(8.dp)
+        verticalArrangement = Arrangement.spacedBy(8.dp),
     ) {
         Text(
             text = "This is just a template",
-            style = MaterialTheme.typography.h6
+            style = MaterialTheme.typography.h6,
         )
         Text(
             text = "You can compute a factorial using the library-kotlin module.",
-            style = MaterialTheme.typography.body1
+            style = MaterialTheme.typography.body1,
         )
         TextField(
             value = textFieldState,
@@ -56,25 +56,25 @@ fun Factorial(modifier: Modifier = Modifier) {
             modifier = Modifier
                 .fillMaxWidth()
                 .testTag("Input"),
-            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
+            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
         )
         if (showFactorialError) {
             Text(
                 text = "Valid range is 0-20",
                 style = MaterialTheme.typography.caption,
-                modifier = Modifier.testTag("ErrorMsg")
+                modifier = Modifier.testTag("ErrorMsg"),
             )
         }
         AnimatedVisibility(
             visible = factorialResult != null,
             modifier = Modifier
                 .padding(top = 8.dp)
-                .align(alignment = Alignment.End)
+                .align(alignment = Alignment.End),
         ) {
             Text(
                 text = "$factorialResult",
                 style = MaterialTheme.typography.subtitle1.copy(fontSize = 24.sp),
-                modifier = Modifier.testTag("FactorialResult")
+                modifier = Modifier.testTag("FactorialResult"),
             )
         }
         Button(
@@ -93,7 +93,7 @@ fun Factorial(modifier: Modifier = Modifier) {
                     }
                 }
             },
-            content = { Text(text = "COMPUTE") }
+            content = { Text(text = "COMPUTE") },
         )
     }
 }
