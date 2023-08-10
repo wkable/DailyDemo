@@ -7,12 +7,14 @@ import android.app.ResourcesManager
 import android.content.Context
 import android.content.ContextWrapper
 import android.content.pm.ApplicationInfo
+import android.content.pm.PackageParser
 import android.content.res.Configuration
 import android.content.res.Resources
 import android.os.Build
 import android.util.ArrayMap
 import androidx.appcompat.app.AppCompatActivity
 import com.ncorti.kotlin.template.app.R
+import com.ncorti.kotlin.template.app.plugin.PackageParserCompat
 import dalvik.system.DexClassLoader
 import java.io.File
 import java.lang.ref.WeakReference
@@ -137,4 +139,11 @@ fun Context.mockPlugin(pluginFile: File) {
         ResourcesManager.getInstance()
             .appendLibAssetForMainAssetPath(applicationInfo.publicSourceDir, "$packageName.test")
     }
+}
+
+/**
+ * 解析 apk 包中的内容获取信息
+ */
+fun parsePluginApk(apkFile: File, context: Context = appContext): PackageParser.Package {
+    return PackageParserCompat.parsePackage(context, apkFile, PackageParser.PARSE_MUST_BE_APK)
 }

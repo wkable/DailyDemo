@@ -1,4 +1,4 @@
-package com.ncorti.kotlin.template.app
+package com.ncorti.kotlin.template.app.utils
 
 import android.Manifest
 import android.content.Intent
@@ -13,7 +13,6 @@ import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.RequiresApi
 import androidx.core.app.ActivityCompat
-import com.ncorti.kotlin.template.app.utils.appContext
 import com.ncorti.kotlin.template.library.android.ToastUtil
 
 class SdPermissionHelper(
