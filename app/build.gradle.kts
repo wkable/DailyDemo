@@ -63,6 +63,7 @@ dependencies {
     implementation(libs.androidx.constraint.layout)
     implementation(libs.androidx.core.ktx)
 
+    implementation(libs.reflection)
     compileOnly(project(":AndroidStub"))
     testImplementation(libs.junit)
 
@@ -70,4 +71,18 @@ dependencies {
     androidTestImplementation(libs.androidx.test.ext.junit.ktx)
     androidTestImplementation(libs.androidx.test.rules)
     androidTestImplementation(libs.espresso.core)
+}
+
+afterEvaluate {
+    project.android.applicationVariants.forEach { variant ->
+        variant.javaCompileProvider.get().doFirst {
+            (this as? JavaCompile)?.let {
+                val stubProjectPath = project.project(":AndroidStub").projectDir.canonicalPath
+                val stubPath = it.classpath.firstOrNull { classPath ->
+                    classPath.canonicalPath.startsWith(stubProjectPath)
+                }?.canonicalPath ?: throw RuntimeException("reset bootclasspath error")
+                it.options.bootstrapClasspath = files(stubPath, it.options.bootstrapClasspath)
+            }
+        }
+    }
 }
