@@ -63,6 +63,7 @@ dependencies {
     implementation(libs.androidx.constraint.layout)
     implementation(libs.androidx.core.ktx)
 
+    compileOnly(project(":AndroidStub"))
     testImplementation(libs.junit)
 
     androidTestImplementation(libs.androidx.test.ext.junit)

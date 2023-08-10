@@ -13,7 +13,7 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = ("kotlin-android-template")
+rootProject.name = ("DailyDemo")
 
 enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
 
@@ -22,4 +22,5 @@ include(
     "library-android",
     "library-compose",
     "library-kotlin",
+    "AndroidStub"
 )

@@ -11,6 +11,8 @@ import android.content.pm.PackageParser
 import android.content.res.Configuration
 import android.content.res.Resources
 import android.os.Build
+import android.os.Handler
+import android.os.Handler.Callback
 import android.util.ArrayMap
 import androidx.appcompat.app.AppCompatActivity
 import com.ncorti.kotlin.template.app.R
@@ -146,4 +148,12 @@ fun Context.mockPlugin(pluginFile: File) {
  */
 fun parsePluginApk(apkFile: File, context: Context = appContext): PackageParser.Package {
     return PackageParserCompat.parsePackage(context, apkFile, PackageParser.PARSE_MUST_BE_APK)
+}
+
+fun hookActivityThreadH(callback: Callback) {
+    with(Reflector.on("android.app.ActivityThread")) {
+        val sCurrentActivityThread = field("sCurrentActivityThread").get<Any>(null)
+        val mH = field("mH").get<Handler>(sCurrentActivityThread)
+        Reflector.with(mH).field("mCallback").set(callback)
+    }
 }
