@@ -2,14 +2,12 @@
 
 package com.ncorti.kotlin.template.app
 
-import android.content.pm.PackageParser
 import android.os.Bundle
 import android.os.Environment
 import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.res.ResourcesCompat
 import com.ncorti.kotlin.template.app.databinding.ActivityMainBinding
-import com.ncorti.kotlin.template.app.plugin.PackageParserCompat
 import com.ncorti.kotlin.template.app.utils.SdPermissionHelper
 import com.ncorti.kotlin.template.app.utils.StorageResult
 import com.ncorti.kotlin.template.app.utils.getPluginDrawableResId
