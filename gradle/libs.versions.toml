@@ -18,6 +18,7 @@ min_sdk_version = "21"
 target_sdk_version = "30"
 benmanesversion = "0.47.0"
 reflection = "3.1.0"
+booster = "4.16.2"
 
 [libraries]
 junit = { module = "junit:junit", version.ref = "junit" }
@@ -40,8 +41,14 @@ detekt_formatting = { module = "io.gitlab.arturbosch.detekt:detekt-formatting", 
 espresso_core = { module = "androidx.test.espresso:espresso-core", version.ref = "espresso.core" }
 agp = { module = "com.android.tools.build:gradle", version.ref = "agp" }
 kgp = { module = "org.jetbrains.kotlin:kotlin-gradle-plugin", version.ref = "kotlin" }
+booster_api = { module = "com.didiglobal.booster:booster-api", version.ref = "booster" }
+booster_gradle_plugin = { module = "com.didiglobal.booster:booster-gradle-plugin", version.ref = "booster" }
+booster_transform_asm = { module = "com.didiglobal.booster:booster-transform-asm", version.ref = "booster" }
 
 [plugins]
 detekt = { id = "io.gitlab.arturbosch.detekt", version.ref = "detekt" }
 ktlint = { id = "org.jlleitschuh.gradle.ktlint", version.ref = "ktlint.gradle" }
 versions = { id = "com.github.ben-manes.versions", version.ref = "benmanesversion" }
+
+[bundles]
+booster = ["booster_api", "booster_gradle_plugin", "booster_transform_asm"]

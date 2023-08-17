@@ -9,6 +9,7 @@ repositories {
 dependencies {
     implementation(libs.kgp)
     implementation(libs.agp)
+    implementation(libs.bundles.booster)
 }
 
 tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>().configureEach {
