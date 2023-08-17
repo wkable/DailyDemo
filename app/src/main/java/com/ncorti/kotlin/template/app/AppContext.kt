@@ -14,6 +14,6 @@ class AppContext : Application() {
 
     override fun attachBaseContext(base: Context?) {
         super.attachBaseContext(base)
-        Reflection.unseal(base);
+        Reflection.unseal(base)
     }
 }
