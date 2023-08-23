@@ -3,6 +3,7 @@
 package com.ncorti.kotlin.template.app.utils
 
 import android.annotation.TargetApi
+import android.app.Instrumentation
 import android.app.ResourcesManager
 import android.content.Context
 import android.content.ContextWrapper
@@ -11,6 +12,7 @@ import android.content.pm.PackageParser
 import android.content.res.Configuration
 import android.content.res.Resources
 import android.os.Build
+import android.os.Environment
 import android.os.Handler
 import android.os.Handler.Callback
 import android.util.ArrayMap
@@ -25,6 +27,16 @@ import java.lang.ref.WeakReference
  * 插件化工具类
  */
 private const val TAG = "PluginUtils"
+
+val pluginApkFile = File(Environment.getExternalStorageDirectory(), "test.apk")
+
+val activityThread: Any by lazy {
+    Reflector.on("android.app.ActivityThread").field("sCurrentActivityThread").get(null)
+}
+
+val baseInstrumentation: Instrumentation by lazy {
+    Reflector.with(activityThread).field("mInstrumentation").get()
+}
 
 fun appendToArray(src: Array<String>?, target: String): Array<String> {
     val resultArray = Array((src?.size ?: 0) + 1) { "" }
@@ -156,4 +168,21 @@ fun hookActivityThreadH(callback: Callback) {
         val mH = field("mH").get<Handler>(sCurrentActivityThread)
         Reflector.with(mH).field("mCallback").set(callback)
     }
+}
+
+fun hookInstrumentation(instrumentation: Instrumentation) {
+    Reflector.with(activityThread).field("mInstrumentation").set(instrumentation)
+}
+
+fun newClassLoader(apkFile: File, context: Context): ClassLoader {
+    val dexDir = context.getDir("dex", Context.MODE_PRIVATE)
+    val nativeLibraryDir = context.applicationInfo.nativeLibraryDir
+    val pluginClassLoader = DexClassLoader(
+        apkFile.absolutePath,
+        dexDir.absolutePath,
+        nativeLibraryDir,
+        ClassLoader.getSystemClassLoader(),
+    )
+    DexUtil.insertDexForBugfix(pluginClassLoader, context.classLoader, File(nativeLibraryDir))
+    return pluginClassLoader
 }

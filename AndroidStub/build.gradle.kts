@@ -23,6 +23,9 @@ android {
         targetCompatibility = JavaVersion.VERSION_17
     }
 
+    buildFeatures {
+        aidl = true
+    }
     kotlinOptions {
         jvmTarget = JavaVersion.VERSION_17.toString()
     }
