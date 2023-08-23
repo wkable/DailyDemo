@@ -48,4 +48,3 @@ public class MyInstrumentation extends Instrumentation {
         return mBase.newActivity(newClassLoader, className, intent);
     }
 }
-
