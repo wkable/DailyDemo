@@ -2,12 +2,12 @@ package com.ncorti.kotlin.template.app.oom
 
 import android.os.Environment
 import android.util.Log
-import java.io.File
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
+import java.io.File
 
 class OOMTester {
 
@@ -56,11 +56,13 @@ class OOMTester {
             val list = mutableListOf<Thread>()
             var count = 0
             while (true) {
-                list.add(object : Thread() {
-                    override fun run() {
-                        sleep(100 * 1000 * 1000)
-                    }
-                }.apply { start() })
+                list.add(
+                    object : Thread() {
+                        override fun run() {
+                            sleep(100 * 1000 * 1000)
+                        }
+                    }.apply { start() },
+                )
                 Log.i(TAG, "mockTooManyThreads: count: $count")
                 count++
                 delay(10)
