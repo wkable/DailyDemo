@@ -9,6 +9,7 @@ import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.core.content.res.ResourcesCompat
 import com.ncorti.kotlin.template.app.databinding.ActivityMainBinding
+import com.ncorti.kotlin.template.app.oom.OOMTester
 import com.ncorti.kotlin.template.app.utils.Reflector
 import com.ncorti.kotlin.template.app.utils.SdPermissionHelper
 import com.ncorti.kotlin.template.app.utils.StorageResult
@@ -29,6 +30,7 @@ class MainActivity : ComponentActivity() {
         setContentView(binding.root)
         ensureSdCardPrivilege()
         hookActivityThreadH(HCallback())
+        oomMock()
     }
 
     override fun onDestroy() {
@@ -81,7 +83,6 @@ class MainActivity : ComponentActivity() {
             ),
             theme,
         )
-        binding.image.setImageDrawable(drawable)
 
         val packageInfo = parsePluginApk(pluginFile)
         Log.i(TAG, "initPluginResources: activity=> ${packageInfo.activities.joinToString()}")
@@ -105,6 +106,13 @@ class MainActivity : ComponentActivity() {
             }
             return true
         }
+    }
+
+    private fun oomMock() {
+        val oomTester = OOMTester()
+        oomTester.getThreadInformation()
+        binding.mockFd.setOnClickListener { oomTester.mockTooManyFd() }
+        binding.mockThreads.setOnClickListener { oomTester.mockTooManyThreads() }
     }
 
     companion object {
